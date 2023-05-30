@@ -1,0 +1,84 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                     String                   @id @default(cuid())
+  email                  String                   @unique
+  name                   String
+  password               String
+  emailVerified          Boolean                  @default(false)
+  VerificationToken      VerificationToken[]
+  UserMedia              UserMedia[]
+  createdAt              DateTime                 @default(now())
+  updatedAt              DateTime                 @updatedAt
+  Project                Project[]
+  TilePage               TilePage[]
+  EmailVerificationToken EmailVerificationToken[]
+}
+
+model VerificationToken {
+  id        String   @id @default(cuid())
+  expiresAt DateTime
+  token     String   @unique
+  ip        String
+  userAgent String
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model UserMedia {
+  id        String   @id @default(cuid())
+  url       String
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model TilePage {
+  id        String   @id @default(cuid())
+  name      String
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  isPublic  Boolean  @default(false)
+  data      Json
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  Project   Project? @relation(fields: [projectId], references: [id])
+  projectId String?
+}
+
+model Project {
+  id          String     @id @default(cuid())
+  name        String
+  description String?
+  imageUrl    String?
+  columns     Int        @default(6)
+  rows        Int        @default(4)
+  user        User       @relation(fields: [userId], references: [id])
+  userId      String
+  isPublic    Boolean    @default(false)
+  pages       TilePage[]
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+}
+
+model EmailVerificationToken {
+  id        String   @id @default(cuid())
+  token     String
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
