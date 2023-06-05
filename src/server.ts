@@ -17,7 +17,10 @@ app.use(
 );
 
 app.use("/v1", routes);
-app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
+app.use(
+  "/uploads",
+  express.static(path.join(__dirname, "/root/freespeech-api/uploads"))
+);
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);

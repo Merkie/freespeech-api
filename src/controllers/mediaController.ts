@@ -13,18 +13,16 @@ export const upload = async (req: Request, res: Response) => {
     const filename = `${Date.now()}.${ext}`;
 
     // Specify the file path to save
-    const filePath = `../uploads/${filename}`;
+    const filePath = `/root/freespeech-api/uploads/${filename}`;
 
     // Use jimp to resize the image
     const image = await Jimp.read(fileData);
     image.resize(256, Jimp.AUTO).write(filePath);
 
-    res
-      .status(200)
-      .json({
-        message: "File uploaded successfully",
-        url: `/uploads/${filename}`,
-      });
+    res.status(200).json({
+      message: "File uploaded successfully",
+      url: `/uploads/${filename}`,
+    });
   } catch (error) {
     res
       .status(500)
