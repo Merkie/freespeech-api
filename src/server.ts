@@ -19,7 +19,7 @@ app.use(
 app.use("/v1", routes);
 app.use(
   "/uploads",
-  express.static(path.join(__dirname, "/root/freespeech-api/uploads"))
+  express.static(path.join("/", "root", "freespeech-api", "uploads"))
 );
 
 app.listen(port, () => {
