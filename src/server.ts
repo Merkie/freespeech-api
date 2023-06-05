@@ -2,6 +2,7 @@ import express from "express";
 import routes from "./routes";
 import cors from "cors";
 import dotenv from "dotenv";
+import path from "path";
 dotenv.config();
 
 const port = 3000;
@@ -16,6 +17,7 @@ app.use(
 );
 
 app.use("/v1", routes);
+app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);

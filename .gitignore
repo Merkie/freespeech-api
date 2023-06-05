@@ -3,6 +3,7 @@ node_modules
 /build
 /package
 /dist
+/uploads/*
 .env
 .env.*
 !.env.example
