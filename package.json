@@ -1,0 +1,19 @@
+{
+  "name": "freespeech-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "tsx watch src/server"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "prisma": "^5.10.2",
+    "tsx": "^4.7.1"
+  },
+  "dependencies": {
+    "express": "^4.18.3"
+  }
+}
