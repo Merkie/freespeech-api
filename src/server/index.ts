@@ -1,16 +1,18 @@
-import express from "express";
+import dotenv from 'dotenv';
+dotenv.config();
+
+import { elevenlabsRouter } from './routers/elevenlabs';
+import express from 'express';
 
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
 
-const router = express.Router();
-
-router.get("/", function (req, res) {
-  res.send("Hello World!");
+app.get('/', function (req, res) {
+	res.send('Hello World!');
 });
 
-app.use("/", router);
+app.use('/elevenlabs', elevenlabsRouter);
 
-app.listen(port, () => {
-  console.log(`FreeSpeech Server running at http://localhost:${port}`);
+app.listen(port, async () => {
+	console.log(`FreeSpeech Server running at http://localhost:${port}`);
 });
