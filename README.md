@@ -2,6 +2,6 @@
 
 Roadmap:
 
-[x] ElevenLabs
-[ ] Bing Images
-[ ] R2
+- [x] ElevenLabs
+- [ ] Bing Images
+- [ ] R2
