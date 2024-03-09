@@ -3,10 +3,13 @@ dotenv.config();
 
 import { elevenlabsRouter } from './routers/elevenlabs';
 import express from 'express';
+import cors from 'cors';
 
 const app = express();
 const port = process.env.PORT || 3000;
 
+app.use(cors());
+app.options('*', cors());
 app.use(express.json());
 
 app.get('/', function (req, res) {
