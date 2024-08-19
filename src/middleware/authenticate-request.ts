@@ -1,7 +1,8 @@
 import { NextFunction, type Request, type Response } from 'express';
 import { verifyToken } from '@/utils/token';
 
-export default (
+export const authenticateRequest =
+	(
 		{
 			noRedirect
 		}: {
