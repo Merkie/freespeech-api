@@ -5,8 +5,7 @@ import type { Request, Response } from 'express';
 export const GET = [
 	authenticateRequest(),
 	async (req: Request, res: Response) => {
-		const searchParams = new URL(req.url).searchParams;
-		const query = searchParams.get('q') || '';
+		const query = req.query.q + '';
 
 		const results = await searchBingImages(query);
 

@@ -4,9 +4,8 @@ import type { Request, Response } from 'express';
 export const GET = [
 	authenticateRequest(),
 	async (req: Request, res: Response) => {
-		const searchParams = new URL(req.url).searchParams;
-		const query = searchParams.get('q') || '';
-		const skin = searchParams.get('skin') || '';
+		const query = req.query.q + '';
+		const skin = req.query.skin + '';
 
 		const results = await searchOpenSymbols(query, skin);
 
