@@ -1,27 +1,43 @@
 {
 	"name": "freespeech-api",
 	"version": "1.0.0",
-	"description": "",
 	"main": "index.js",
 	"scripts": {
-		"dev": "tsx watch src/server",
-		"start": "tsx src/server"
+		"dev": "tsx watch src",
+		"start": "prisma generate && tsx src"
 	},
 	"keywords": [],
 	"author": "",
 	"license": "ISC",
+	"description": "",
 	"devDependencies": {
 		"@types/cors": "^2.8.17",
-		"@types/dotenv": "^8.2.0",
 		"@types/express": "^4.17.21",
-		"@types/node": "^20.11.24",
-		"prisma": "^5.10.2",
-		"tsx": "^4.7.1"
+		"@types/jsonwebtoken": "^9.0.6",
+		"@types/node": "^22.4.1",
+		"@types/node-cron": "^3.0.11",
+		"@types/nodemailer": "^6.4.15",
+		"@types/ws": "^8.5.12",
+		"prisma": "^5.18.0",
+		"tsx": "^4.17.0"
 	},
 	"dependencies": {
-		"@prisma/client": "^5.10.2",
+		"@paralleldrive/cuid2": "^2.2.2",
+		"@prisma/client": "^5.18.0",
+		"argon2": "^0.40.3",
+		"axios": "^1.7.4",
+		"axios-retry": "^4.5.0",
 		"cors": "^2.8.5",
+		"cryptr": "^6.3.0",
 		"dotenv": "^16.4.5",
-		"express": "^4.18.3"
+		"express": "^4.19.2",
+		"express-async-errors": "^3.1.1",
+		"express-file-routing": "^3.0.3",
+		"jsonwebtoken": "^9.0.2",
+		"node-cron": "^3.0.3",
+		"nodemailer": "^6.9.14",
+		"openai": "^4.56.0",
+		"ws": "^8.18.0",
+		"zod": "^3.23.8"
 	}
 }
