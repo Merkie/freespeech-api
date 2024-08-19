@@ -24,7 +24,7 @@ export const POST = [
 				}
 			}
 		});
-		if (existingUser) return res.status(400).json({ message: 'User already exists' });
+		if (existingUser) return res.status(400).json({ error: 'User already exists' });
 
 		const hashedPassword = bcrypt.hashSync(body.password, 10);
 		const createdUser = await prisma.user.create({

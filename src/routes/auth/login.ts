@@ -23,11 +23,11 @@ export const POST = [
 				}
 			}
 		});
-		if (!user) return res.status(401).json({ message: 'Invalid email or password' });
-		if (!user.password) return res.status(401).json({ message: 'Invalid email or password' });
+		if (!user) return res.status(401).json({ error: 'Invalid email or password' });
+		if (!user.password) return res.status(401).json({ error: 'Invalid email or password' });
 
 		const doPasswordsMatch = bcrypt.compareSync(body.password, user.password);
-		if (!doPasswordsMatch) return res.status(401).json({ message: 'Invalid email or password' });
+		if (!doPasswordsMatch) return res.status(401).json({ error: 'Invalid email or password' });
 
 		const { token } = generateToken(user.id);
 
