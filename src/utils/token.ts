@@ -1,25 +1,23 @@
-import jwt from "jsonwebtoken";
-import { JWT_SECRET } from "./env";
+import jwt from 'jsonwebtoken';
+import { JWT_SECRET } from './env';
 
-export function generateTokens(userId: string) {
-  const httpToken = jwt.sign({ userId }, JWT_SECRET, {
-    expiresIn: "30d",
-  });
+export function generateToken(userId: string) {
+	const token = jwt.sign({ id: userId }, JWT_SECRET, { expiresIn: '30d' });
 
-  return {
-    token: httpToken,
-  };
+	return {
+		token
+	};
 }
 
 export function verifyToken(token: string) {
-  let userId = "";
+	let userId = '';
 
-  try {
-    let payload = jwt.verify(token, JWT_SECRET);
-    userId = (payload as { userId: string }).userId || "";
-  } catch {}
+	try {
+		let payload = jwt.verify(token, JWT_SECRET);
+		userId = (payload as { id: string }).id || '';
+	} catch {}
 
-  if (!userId) return null;
+	if (!userId) return null;
 
-  return userId;
+	return userId;
 }
