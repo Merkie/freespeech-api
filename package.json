@@ -24,9 +24,11 @@
 	"dependencies": {
 		"@paralleldrive/cuid2": "^2.2.2",
 		"@prisma/client": "^5.18.0",
+		"@types/bcryptjs": "^2.4.6",
 		"argon2": "^0.40.3",
 		"axios": "^1.7.4",
 		"axios-retry": "^4.5.0",
+		"bcryptjs": "^2.4.3",
 		"cors": "^2.8.5",
 		"cryptr": "^6.3.0",
 		"dotenv": "^16.4.5",
