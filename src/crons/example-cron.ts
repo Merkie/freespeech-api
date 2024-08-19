@@ -1,7 +1,7 @@
-import cron from "node-cron";
+import cron from 'node-cron';
 
 const ExampleCron = {
-  start: startExampleCron,
+	start: startExampleCron
 };
 
 export default ExampleCron;
@@ -9,13 +9,13 @@ export default ExampleCron;
 let isRunning = false;
 
 async function startExampleCron() {
-  cron.schedule("*/5 * * * * *", async () => {
-    if (isRunning) return;
+	cron.schedule('*/5 * * * * *', async () => {
+		if (isRunning) return;
 
-    isRunning = true;
+		isRunning = true;
 
-    console.log(`[Example Cron] Tick!`);
+		console.log(`[Example Cron] Tick!`);
 
-    isRunning = false;
-  });
+		isRunning = false;
+	});
 }
