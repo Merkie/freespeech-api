@@ -45,7 +45,7 @@ async function getAccessToken(code: string) {
 	url.searchParams.append('client_secret', GOOGLE_CLIENT_SECRET);
 	url.searchParams.append('code', code);
 	url.searchParams.append('grant_type', 'authorization_code');
-	url.searchParams.append('redirect_uri', CLIENT_HOST + '/auth/oauth/google');
+	url.searchParams.append('redirect_uri', CLIENT_HOST + '/oauth/google');
 
 	const response = await fetch(url, {
 		method: 'POST'
