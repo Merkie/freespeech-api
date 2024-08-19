@@ -11,6 +11,7 @@ export const BING_IMAGE_SEARCH_KEY = process.env.BING_IMAGE_SEARCH_KEY + '';
 export const R2_ACCOUNT_ID = process.env.R2_ACCOUNT_ID + '';
 export const R2_ACCESS_KEY = process.env.R2_ACCESS_KEY + '';
 export const R2_SECRET_KEY = process.env.R2_SECRET_KEY + '';
+export const R2_BUCKET = process.env.R2_BUCKET + '';
 
 export function init() {
 	if (PORT.length === 0) throw new Error('PORT is not set');
@@ -23,4 +24,5 @@ export function init() {
 	if (R2_ACCOUNT_ID.length === 0) throw new Error('R2_ACCOUNT_ID is not set');
 	if (R2_ACCESS_KEY.length === 0) throw new Error('R2_ACCESS_KEY is not set');
 	if (R2_SECRET_KEY.length === 0) throw new Error('R2_SECRET_KEY is not set');
+	if (R2_BUCKET.length === 0) throw new Error('R2_BUCKET is not set');
 }
