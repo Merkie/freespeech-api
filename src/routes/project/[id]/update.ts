@@ -8,7 +8,7 @@ const schema = z.object({
 	name: z.string().min(1).max(255).optional(),
 	columns: z.number().min(1).max(10).optional(),
 	rows: z.number().min(1).max(10).optional(),
-	imageUrl: z.string().url().optional()
+	imageUrl: z.string().optional()
 });
 export const POST = [
 	authenticateRequest(),
