@@ -13,11 +13,31 @@ model User {
   Project  Project[]
   TilePage TilePage[]
 
-  email            String  @unique
-  name             String
-  password         String?
-  profileImgUrl    String?
-  elevenLabsApiKey String?
+  email                    String  @unique
+  name                     String
+  password                 String?
+  profileImgUrl            String?
+  elevenLabsApiKey         String?
+  usePersonalElevenLabsKey Boolean @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Project {
+  id String @id @default(cuid())
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+
+  connectedPages TilePageInProject[]
+
+  name        String
+  description String?
+  imageUrl    String?
+  columns     Int     @default(6)
+  rows        Int     @default(4)
+  isPublic    Boolean @default(false)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -26,16 +46,27 @@ model User {
 model TilePage {
   id String @id @default(cuid())
 
-  tiles Tile[]
+  tiles             Tile[]
+  connectedProjects TilePageInProject[]
 
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId    String
-  Project   Project? @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  projectId String?
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
 
   name     String
-  data     Json?
   isPublic Boolean @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model TilePageInProject {
+  id String @id @default(cuid())
+
+  tilePage   TilePage @relation(fields: [tilePageId], references: [id], onDelete: Cascade)
+  tilePageId String
+
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  projectId String
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -56,24 +87,6 @@ model Tile {
   image           String @default("")
   navigation      String @default("")
   displayText     String @default("")
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model Project {
-  id String @id @default(cuid())
-
-  user   User       @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId String
-  pages  TilePage[]
-
-  name        String
-  description String?
-  imageUrl    String?
-  columns     Int     @default(6)
-  rows        Int     @default(4)
-  isPublic    Boolean @default(false)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
