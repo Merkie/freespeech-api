@@ -13,6 +13,6 @@ export const GET = [
 		});
 		if (!user) return res.json({ error: 'User not found' });
 
-		return res.json({ key: DecryptElevenLabsKey(user?.elevenLabsApiKey) });
+		return res.json({ key: DecryptElevenLabsKey(user?.elevenLabsApiKey) + '' });
 	}
 ];
