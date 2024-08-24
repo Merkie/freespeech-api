@@ -15,6 +15,25 @@ export const POST = [
 
 		const response = await fetch(body.url);
 
-		return res.send(response);
+		if (!response.ok) {
+			return res.status(response.status).send('Failed to fetch the image');
+		}
+
+		const arrayBuffer = await response.arrayBuffer();
+		const buffer = Buffer.from(arrayBuffer);
+
+		res.setHeader(
+			'Content-Type',
+			response.headers.get('content-type') || 'application/octet-stream'
+		);
+		res.setHeader('Content-Length', buffer.length.toString());
+		res.setHeader(
+			'Content-Disposition',
+			`attachment; filename="image.${
+				response.headers.get('content-type')?.split('/').pop() || 'jpg'
+			}"`
+		);
+
+		res.end(buffer);
 	}
 ];
