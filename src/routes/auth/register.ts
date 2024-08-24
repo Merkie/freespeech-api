@@ -35,7 +35,8 @@ export const POST = [
 			}
 		});
 
-		const token = generateToken(createdUser.id);
+		const { token } = generateToken(createdUser.id);
+
 		return res.json({ token });
 	}
 ];
