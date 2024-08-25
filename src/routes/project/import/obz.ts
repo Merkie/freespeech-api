@@ -34,15 +34,15 @@ export const POST = [
 
 		const obzIDToPrismaID = new Map<string, string>();
 
-		for await (const file of obfFiles) {
-			console.log(`Creating page ${file.fileName}`);
+		// Create all tile pages concurrently
+		const tilePagePromises = obfFiles.map(async (file) => {
 			const createdTilePage = await prisma.tilePage.create({
 				data: {
 					name: file.fileName === manifest.root ? 'Home' : file.data.name,
 					userId: req.userId!
 				}
 			});
-			if (!createdTilePage) return res.status(500).json({ error: 'Failed to create tile page' });
+			if (!createdTilePage) throw new Error('Failed to create tile page');
 
 			await prisma.tilePageInProject.create({
 				data: {
@@ -52,10 +52,17 @@ export const POST = [
 			});
 
 			obzIDToPrismaID.set(file.data.id, createdTilePage.id);
+		});
+
+		try {
+			await Promise.all(tilePagePromises);
+		} catch (error) {
+			return res.status(500).json({ error });
 		}
 
-		for await (const file of obfFiles) {
-			await prisma.tile.createMany({
+		// Create all tiles concurrently
+		const tilePromises = obfFiles.map((file) =>
+			prisma.tile.createMany({
 				data: file.data.grid.order
 					.map((row, rowIndex) => {
 						return row.map((item, itemIndex) => {
@@ -90,17 +97,15 @@ export const POST = [
 					tilePageId: string;
 					navigation: string;
 				}[]
-			});
+			})
+		);
+
+		try {
+			await Promise.all(tilePromises);
+		} catch (error) {
+			return res.status(500).json({ error });
 		}
 
 		return res.json({ success: true });
 	}
 ];
-
-// import type { OBFPage } from '$ts/common/openboardformat';
-// import { json } from '@sveltejs/kit';
-
-// export const POST = async ({ request, locals: { user, prisma } }) => {
-
-// 	return json({ success: true });
-// };
