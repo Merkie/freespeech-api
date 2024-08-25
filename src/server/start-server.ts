@@ -15,7 +15,7 @@ export default async function StartServer() {
 	app.use(cors());
 	app.options('*', cors());
 
-	app.use(express.json({ limit: '50mb' }));
+	app.use(express.json({ limit: '100mb' }));
 
 	app.use(LogRequestMiddleware);
 
