@@ -18,7 +18,7 @@ async function getBrowserInstance() {
 			args: ['--no-sandbox', '--disable-setuid-sandbox'],
 			defaultViewport: {
 				width: 1280,
-				height: 800
+				height: 720
 			}
 		});
 	}
