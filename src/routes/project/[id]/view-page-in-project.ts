@@ -1,6 +1,7 @@
 import { authenticateRequest } from '@/middleware/authenticate-request';
 import { validateSchema } from '@/middleware/validate-schema';
 import prisma from '@/resources/prisma';
+import { GetProjectHomePageID } from '@/utils/get-project-home-page-id';
 import type { Request, Response } from 'express';
 import { z } from 'zod';
 
@@ -47,6 +48,8 @@ export const POST = [
 
 		if (!page) return res.status(404).json({ error: 'Page not found' });
 
-		return res.json({ page });
+		const projectHomePageId = await GetProjectHomePageID(page.project);
+
+		return res.json({ page, isHomePage: page.tilePageId === projectHomePageId });
 	}
 ];
