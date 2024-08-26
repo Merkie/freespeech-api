@@ -106,6 +106,6 @@ export const POST = [
 			return res.status(500).json({ error });
 		}
 
-		return res.json({ success: true });
+		return res.json({ success: true, projectId: createdProject.id });
 	}
 ];

@@ -74,6 +74,6 @@ export const POST = [
 			}[]
 		});
 
-		return res.json({ success: true });
+		return res.json({ success: true, projectId: createdProject.id });
 	}
 ];
