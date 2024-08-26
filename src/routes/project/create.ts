@@ -25,10 +25,10 @@ export const POST = [
 		});
 
 		// Check if the project name is already taken
-		if (projects.map((project) => slugify(project.name)).includes(slugify(body.name)))
-			return res.json({
-				error: 'A project with that name already exists.'
-			});
+		// if (projects.map((project) => slugify(project.name)).includes(slugify(body.name)))
+		// 	return res.json({
+		// 		error: 'A project with that name already exists.'
+		// 	});
 
 		// Create the project
 		const createdProject = await prisma.project.create({
