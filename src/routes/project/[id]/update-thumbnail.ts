@@ -73,7 +73,7 @@ export const POST = [
 				Bucket: R2_BUCKET,
 				Key: project.imageUrl.split('/').filter(Boolean).join('/')
 			});
-			console.log(await s3.send(deleteCommand));
+			await s3.send(deleteCommand);
 		}
 
 		const newThumbnailKey = `${slugify(project.user.name)}-${project.user.id}/${fileName}`;
@@ -87,7 +87,7 @@ export const POST = [
 			Body: fileBuffer,
 			ContentType: 'image/png'
 		});
-		console.log(await s3.send(uploadCommand));
+		await s3.send(uploadCommand);
 
 		await prisma.project.update({
 			where: {

@@ -52,7 +52,7 @@ export const POST = [
 
 		const audio = await response.arrayBuffer();
 
-		console.log('Eleven Labs API request took', Date.now() - startTime, 'ms');
+		// console.log('Eleven Labs API request took', Date.now() - startTime, 'ms');
 
 		res.set('Content-Type', 'audio/mpeg');
 		res.send(Buffer.from(audio));
