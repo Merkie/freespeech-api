@@ -10,9 +10,8 @@ datasource db {
 model User {
   id String @id @default(cuid())
 
-  Project             Project[]
-  TilePage            TilePage[]
-  MarketPlaceTilePage MarketPlaceTilePage[]
+  Project  Project[]
+  TilePage TilePage[]
 
   email                    String  @unique
   name                     String
@@ -47,8 +46,9 @@ model Project {
 model TilePage {
   id String @id @default(cuid())
 
-  tiles             Tile[]
-  connectedProjects TilePageInProject[]
+  tiles               Tile[]
+  connectedProjects   TilePageInProject[]
+  MarketPlaceTilePage MarketPlaceTilePage[]
 
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String
@@ -76,8 +76,8 @@ model TilePageInProject {
 model MarketPlaceTilePage {
   id String @id @default(cuid())
 
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId String
+  tilePage   TilePage @relation(fields: [tilePageId], references: [id], onDelete: Cascade)
+  tilePageId String
 
   name        String
   description String?
