@@ -25,6 +25,35 @@ async function getBrowserInstance() {
 	return browserInstance;
 }
 
+export async function getThumbnail(
+	userId: string,
+	projectId: string,
+	pageId: string,
+	fileName: string
+) {
+	const browser = await getBrowserInstance();
+	const page = await browser.newPage();
+
+	// Set the cookies
+	await page.setCookie({
+		name: 'token',
+		value: generateToken(userId).token,
+		domain: new URL(CLIENT_HOST).hostname,
+		path: '/'
+	});
+
+	await page.goto(`${CLIENT_HOST}/app/project/${projectId}/${pageId}/thumbnail`);
+	await page.waitForNetworkIdle();
+
+	const screenshotBuffer = await page.screenshot({ type: 'png' });
+
+	await page.close();
+
+	const file = new File([screenshotBuffer], fileName, { type: 'image/png' });
+
+	return file;
+}
+
 export const POST = [
 	authenticateRequest(),
 	async (req: Request, res: Response) => {
@@ -47,26 +76,9 @@ export const POST = [
 		const homePageId = await GetProjectHomePageID(project);
 		if (!homePageId) return res.status(404).json({ error: 'Home page not found' });
 
-		const browser = await getBrowserInstance();
-		const page = await browser.newPage();
-
-		// Set the cookies
-		await page.setCookie({
-			name: 'token',
-			value: generateToken(req.userId!).token,
-			domain: new URL(CLIENT_HOST).hostname,
-			path: '/'
-		});
-
-		await page.goto(`${CLIENT_HOST}/app/project/${project.id}/${homePageId}/thumbnail`);
-		await page.waitForNetworkIdle();
-
-		const screenshotBuffer = await page.screenshot({ type: 'png' });
-
-		await page.close();
-
 		const fileName = `${Date.now()}-thumbnail.png`;
-		const file = new File([screenshotBuffer], fileName, { type: 'image/png' });
+
+		const file = await getThumbnail(project.userId, project.id, homePageId, fileName);
 
 		if (project.imageUrl) {
 			const deleteCommand = new DeleteObjectCommand({
