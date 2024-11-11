@@ -23,7 +23,9 @@ export const DELETE = [
 			})
 		]);
 
-		invalidateCache(`page:${tilePage}:${req.userId}`);
+		if (!tilePage) return res.json({ error: 'The tile does not exist.' });
+
+		invalidateCache(`page:${tilePage.id}:${req.userId}`);
 
 		return res.json({ success: true });
 	}
