@@ -4,6 +4,7 @@ import { authenticateRequest } from '@/middleware/authenticate-request';
 import { validateSchema } from '@/middleware/validate-schema';
 import prisma from '@/resources/prisma';
 import slugify from '@/utils/slugify';
+import { invalidateCache } from '@/resources/cache';
 
 const schema = z.object({
 	name: z.string().min(1).max(50),
@@ -67,6 +68,8 @@ export const POST = [
 				}
 			}
 		});
+
+		invalidateCache(`project:${req.params.id}:${req.userId}`);
 
 		return res.json({ page });
 	}

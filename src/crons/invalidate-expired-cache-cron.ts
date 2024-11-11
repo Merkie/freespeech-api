@@ -1,3 +1,4 @@
+import { invalidateCacheAllExpired } from '@/resources/cache';
 import cron from 'node-cron';
 
 const ExampleCron = {
@@ -9,12 +10,12 @@ export default ExampleCron;
 let isRunning = false;
 
 async function startExampleCron() {
-	cron.schedule('*/5 * * * * *', async () => {
+	cron.schedule('*/30 * * * *', async () => {
 		if (isRunning) return;
 
 		isRunning = true;
 
-		console.log(`[Example Cron] Tick!`);
+		invalidateCacheAllExpired();
 
 		isRunning = false;
 	});
