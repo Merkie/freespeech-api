@@ -27,7 +27,12 @@ export const POST = [
 			prisma.tilePage.findFirst({
 				where: {
 					id: req.params.id,
-					userId: req.userId
+					userId: req.userId,
+					tiles: {
+						some: {
+							id: req.params.id
+						}
+					}
 				}
 			}),
 			prisma.tile.update({
