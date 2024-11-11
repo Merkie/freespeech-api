@@ -1,5 +1,5 @@
-import ExampleCron from './example-cron';
+import InvalidateExpiredCache from './invalidate-expired-cache-cron';
 
 export function StartCrons() {
-	// ExampleCron.start();
+	InvalidateExpiredCache.start();
 }

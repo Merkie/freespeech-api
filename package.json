@@ -18,14 +18,14 @@
 		"@types/node-cron": "^3.0.11",
 		"@types/nodemailer": "^6.4.15",
 		"@types/ws": "^8.5.12",
-		"prisma": "^5.18.0",
+		"prisma": "^5.22.0",
 		"tsx": "^4.17.0"
 	},
 	"dependencies": {
 		"@aws-sdk/client-s3": "^3.633.0",
 		"@aws-sdk/s3-request-presigner": "^3.633.0",
 		"@paralleldrive/cuid2": "^2.2.2",
-		"@prisma/client": "^5.18.0",
+		"@prisma/client": "^5.22.0",
 		"@types/bcryptjs": "^2.4.6",
 		"argon2": "^0.40.3",
 		"axios": "^1.7.4",
