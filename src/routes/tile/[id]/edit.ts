@@ -1,5 +1,6 @@
 import { authenticateRequest } from '@/middleware/authenticate-request';
 import { validateSchema } from '@/middleware/validate-schema';
+import { invalidateCache } from '@/resources/cache';
 import prisma from '@/resources/prisma';
 import type { Request, Response } from 'express';
 import { z } from 'zod';
@@ -22,15 +23,25 @@ export const POST = [
 	async (req: Request, res: Response) => {
 		const body = req.body as z.infer<typeof schema>;
 
-		await prisma.tile.update({
-			where: {
-				id: req.params.id,
-				TilePage: {
+		const [tilePage, _] = await Promise.all([
+			prisma.tilePage.findFirst({
+				where: {
+					id: req.params.id,
 					userId: req.userId
 				}
-			},
-			data: body
-		});
+			}),
+			prisma.tile.update({
+				where: {
+					id: req.params.id,
+					TilePage: {
+						userId: req.userId
+					}
+				},
+				data: body
+			})
+		]);
+
+		invalidateCache(`page:${tilePage}:${req.userId}`);
 
 		return res.json({ success: true });
 	}
