@@ -23,32 +23,31 @@ export const POST = [
 	async (req: Request, res: Response) => {
 		const body = req.body as z.infer<typeof schema>;
 
-		const [tilePage, _] = await Promise.all([
-			prisma.tilePage.findFirst({
-				where: {
-					id: req.params.id,
-					userId: req.userId,
-					tiles: {
-						some: {
-							id: req.params.id
-						}
-					}
+		const tilePage = await prisma.tile.findFirst({
+			where: {
+				id: req.params.id,
+				TilePage: {
+					userId: req.userId
 				}
-			}),
-			prisma.tile.update({
-				where: {
-					id: req.params.id,
-					TilePage: {
-						userId: req.userId
-					}
-				},
-				data: body
-			})
-		]);
+			},
+			include: {
+				TilePage: true
+			}
+		});
 
 		if (!tilePage) return res.json({ error: 'The tile does not exist.' });
 
-		invalidateCache(`page:${tilePage.id}:${req.userId}`);
+		await prisma.tile.update({
+			where: {
+				id: req.params.id,
+				TilePage: {
+					userId: req.userId
+				}
+			},
+			data: body
+		});
+
+		invalidateCache(`page:${tilePage.tilePageId}:${req.userId}`);
 
 		return res.json({ success: true });
 	}
