@@ -3,5 +3,5 @@
 Roadmap:
 
 - [x] ElevenLabs
-- [ ] Bing Images
-- [ ] R2
+- [x] Google Images (via Bright Data)
+- [x] R2
