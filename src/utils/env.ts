@@ -7,7 +7,6 @@ export const SITE_SECRET = process.env.SITE_SECRET + '';
 export const CLIENT_HOST = process.env.CLIENT_HOST + '';
 export const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID + '';
 export const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET + '';
-export const BING_IMAGE_SEARCH_KEY = process.env.BING_IMAGE_SEARCH_KEY + '';
 export const BRIGHT_DATA_PROXY_URL = process.env.BRIGHT_DATA_PROXY_URL + '';
 export const R2_ACCOUNT_ID = process.env.R2_ACCOUNT_ID + '';
 export const R2_ACCESS_KEY = process.env.R2_ACCESS_KEY + '';
