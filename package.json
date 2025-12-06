@@ -24,6 +24,7 @@
 	"dependencies": {
 		"@aws-sdk/client-s3": "^3.633.0",
 		"@aws-sdk/s3-request-presigner": "^3.633.0",
+		"@fal-ai/client": "^1.7.2",
 		"@paralleldrive/cuid2": "^2.2.2",
 		"@prisma/client": "^5.22.0",
 		"@types/bcryptjs": "^2.4.6",
