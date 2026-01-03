@@ -38,6 +38,7 @@ model Project {
   columns     Int     @default(6)
   rows        Int     @default(4)
   isPublic    Boolean @default(false)
+  homePageId  String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

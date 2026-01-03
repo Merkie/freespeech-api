@@ -6,15 +6,31 @@ import type { Request, Response } from 'express';
 export const DELETE = [
 	authenticateRequest(),
 	async (req: Request, res: Response) => {
-		await prisma.tilePage.delete({
+		const pageId = req.params.id as string;
+
+		// Check if this page is a home page for any project
+		const projectWithThisHomePage = await prisma.project.findFirst({
 			where: {
-				userId: req.userId,
-				id: req.params.id as string
+				homePageId: pageId,
+				userId: req.userId
 			}
 		});
 
-		invalidateCache(`page:${req.params.id}:${req.userId}`);
-		invalidateCache(`project:${req.params.id}:${req.userId}`);
+		if (projectWithThisHomePage) {
+			return res.status(400).json({
+				error: 'Cannot delete the home page. Every project must have a home page.'
+			});
+		}
+
+		await prisma.tilePage.delete({
+			where: {
+				userId: req.userId,
+				id: pageId
+			}
+		});
+
+		invalidateCache(`page:${pageId}:${req.userId}`);
+		invalidateCache(`project:${pageId}:${req.userId}`);
 
 		return res.json({
 			message: 'Page deleted successfully.'

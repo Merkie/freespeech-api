@@ -17,7 +17,7 @@ export const POST = [
 	async (req: Request, res: Response) => {
 		const body = req.body as z.infer<typeof schema>;
 
-		// Create the project
+		// Create the project first
 		const createdProject = await prisma.project.create({
 			data: {
 				name: body.name,
@@ -25,51 +25,35 @@ export const POST = [
 				isPublic: false,
 				columns: body.columns,
 				rows: body.rows,
+				userId: req.userId!
+			}
+		});
+
+		// Create the home page
+		const createdHomePage = await prisma.tilePage.create({
+			data: {
+				name: 'Home',
 				userId: req.userId!,
-				connectedPages: {
-					create: [
-						{
-							tilePage: {
-								create: {
-									name: 'Home',
-									userId: req.userId!,
-									tiles: {
-										create: {
-											page: 0,
-											x: 0,
-											y: 0
-										}
-									}
-								}
-							}
-						}
-					]
+				connectedProjects: {
+					create: {
+						projectId: createdProject.id
+					}
+				},
+				tiles: {
+					create: {
+						page: 0,
+						x: 0,
+						y: 0
+					}
 				}
 			}
 		});
 
-		// // Create the home page
-		// const createdHomePage = await prisma.tilePage.create({
-		// 	data: {
-		// 		name: 'Home',
-		// 		userId: req.userId!,
-		// 		connectedProjects: {
-		// 			create: {
-		// 				projectId: createdProject.id
-		// 			}
-		// 		}
-		// 	}
-		// });
-
-		// // Create a tile for the home page
-		// await prisma.tile.create({
-		// 	data: {
-		// 		tilePageId: createdHomePage.id,
-		// 		page: 0,
-		// 		x: 0,
-		// 		y: 0
-		// 	}
-		// });
+		// Set the homePageId on the project
+		await prisma.project.update({
+			where: { id: createdProject.id },
+			data: { homePageId: createdHomePage.id }
+		});
 
 		invalidateCache(`projects:${req.userId}`);
 
