@@ -70,6 +70,9 @@ model TilePageInProject {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@index([tilePageId])
+  @@index([projectId])
 }
 
 model Tile {
@@ -90,4 +93,6 @@ model Tile {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@index([tilePageId])
 }

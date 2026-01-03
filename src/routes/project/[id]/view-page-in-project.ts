@@ -16,6 +16,7 @@ export const POST = [
 	async (req: Request, res: Response) => {
 		const body = req.body as z.infer<typeof schema>;
 
+		const startTime = Date.now();
 		const page = await cache(
 			prisma.tilePageInProject.findFirst({
 				where: {
@@ -52,6 +53,8 @@ export const POST = [
 				ttl: '60s'
 			}
 		);
+		const duration = Date.now() - startTime;
+		console.log(`[view-page-in-project] Page fetched in ${duration}ms (pageId: ${body.pageId})`);
 
 		if (!page) return res.status(404).json({ error: 'Page not found' });
 
