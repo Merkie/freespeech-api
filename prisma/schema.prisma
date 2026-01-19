@@ -49,12 +49,15 @@ model TilePage {
 
   tiles             Tile[]
   connectedProjects TilePageInProject[]
+  templateLink      PageTemplateLink?   @relation("PageWithTemplate")
+  pagesUsingAsTemplate PageTemplateLink[] @relation("TemplateSource")
 
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String
 
-  name     String
-  isPublic Boolean @default(false)
+  name       String
+  isPublic   Boolean @default(false)
+  isTemplate Boolean @default(false)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -95,5 +98,18 @@ model Tile {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  @@index([tilePageId])
+}
+
+model PageTemplateLink {
+  id             String   @id @default(cuid())
+  tilePage       TilePage @relation("PageWithTemplate", fields: [tilePageId], references: [id], onDelete: Cascade)
+  tilePageId     String   @unique
+  templatePage   TilePage @relation("TemplateSource", fields: [templatePageId], references: [id], onDelete: Cascade)
+  templatePageId String
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@index([templatePageId])
   @@index([tilePageId])
 }
