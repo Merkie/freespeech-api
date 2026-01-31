@@ -1,12 +1,17 @@
 import express, { Express } from 'express';
-require('express-async-errors');
+import 'express-async-errors';
 import cors from 'cors';
 import http from 'http';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import { router } from 'express-file-routing';
 import HandleErrorMiddleware from '@/middleware/handle-error';
 import LogRequestMiddleware from '@/middleware/log-request';
 // import { WebsocketServer } from "./websocket/websocket-server";
 import { PORT } from '@/utils/env';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 export default async function StartServer() {
 	const app: Express = express();
@@ -19,7 +24,7 @@ export default async function StartServer() {
 
 	app.use(LogRequestMiddleware);
 
-	app.use(await router());
+	app.use(await router({ directory: path.join(__dirname, '..', 'routes') }));
 
 	app.use(HandleErrorMiddleware);
 

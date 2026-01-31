@@ -1,10 +1,15 @@
 {
-	"name": "freespeech-api",
+	"name": "freespeech-server",
 	"version": "1.0.0",
-	"main": "index.js",
+	"type": "module",
+	"main": "dist/index.js",
 	"scripts": {
 		"dev": "tsx watch src",
-		"start": "prisma generate && tsx src"
+		"build": "prisma generate && tsup",
+		"start": "node dist/index.js",
+		"db:generate": "prisma generate",
+		"db:push": "prisma db push",
+		"db:studio": "prisma studio"
 	},
 	"keywords": [],
 	"author": "",
@@ -17,7 +22,9 @@
 		"@types/node": "^22.4.1",
 		"@types/node-cron": "^3.0.11",
 		"prisma": "^5.22.0",
-		"tsx": "^4.17.0"
+		"tsup": "^8.0.0",
+		"tsx": "^4.17.0",
+		"typescript": "~5.6.0"
 	},
 	"dependencies": {
 		"@aws-sdk/client-s3": "^3.633.0",
