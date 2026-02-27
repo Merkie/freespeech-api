@@ -1,12 +1,11 @@
-import { authenticateRequest } from '@/middleware/authenticate-request';
-import { BRIGHT_DATA_PROXY_URL } from '@/utils/env';
 import type { Request, Response } from 'express';
-import axios from 'axios';
+import { authenticateRequest } from '@/middleware/authenticate-request';
+import { BRAVE_SEARCH_API_KEY } from '@/utils/env';
 
 export const GET = [
 	authenticateRequest(),
 	async (req: Request, res: Response) => {
-		const query = req.query.q + '';
+		const query = `${req.query.q}`;
 
 		const results = await searchImages(query);
 
@@ -14,60 +13,51 @@ export const GET = [
 	}
 ];
 
-interface BrightDataImage {
-	link: string;
-	original_image: string;
+interface BraveImage {
 	title: string;
-	source: string;
-	image?: string;
-	image_alt?: string;
-	image_base64?: string;
-}
-
-interface BrightDataResponse {
-	images?: BrightDataImage[];
-}
-
-function parseProxyUrl(proxyUrl: string) {
-	const url = new URL(proxyUrl);
-	return {
-		host: url.hostname,
-		port: parseInt(url.port, 10),
-		auth: {
-			username: decodeURIComponent(url.username),
-			password: decodeURIComponent(url.password)
-		}
+	thumbnail: {
+		src: string;
 	};
+	properties: {
+		url: string;
+	};
+}
+
+interface BraveImageSearchResponse {
+	results?: BraveImage[];
 }
 
 async function searchImages(query: string) {
 	if (!query) return [];
 
 	try {
-		const proxy = parseProxyUrl(BRIGHT_DATA_PROXY_URL);
-		const searchUrl = `https://www.google.com/search?q=${encodeURIComponent(query)}&brd_mobile=desktop&tbm=isch&brd_json=1`;
+		const url = `https://api.search.brave.com/res/v1/images/search?q=${encodeURIComponent(query)}&count=50`;
 
-		const response = await axios.get<BrightDataResponse>(searchUrl, {
-			proxy,
-			timeout: 30000,
-			httpsAgent: new (require('https').Agent)({
-				rejectUnauthorized: false
-			})
+		const response = await fetch(url, {
+			headers: {
+				'Accept': 'application/json',
+				'X-Subscription-Token': BRAVE_SEARCH_API_KEY
+			}
 		});
 
-		const data = response.data;
+		if (!response.ok) {
+			console.error('Brave image search error:', response.status, response.statusText);
+			return [];
+		}
 
-		if (!data.images || !Array.isArray(data.images)) return [];
+		const data: BraveImageSearchResponse = await response.json();
 
-		const results = data.images.map((image) => ({
-			alt: image.title || image.image_alt || '',
-			image_url: image.original_image,
-			thumbnail_url: image.original_image
+		if (!data.results || !Array.isArray(data.results)) return [];
+
+		const results = data.results.map((image) => ({
+			alt: image.title || '',
+			image_url: image.properties.url,
+			thumbnail_url: image.thumbnail.src
 		}));
 
 		return results;
 	} catch (error) {
-		console.error('Bright Data image search error:', error);
+		console.error('Brave image search error:', error);
 		return [];
 	}
 }
