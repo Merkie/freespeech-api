@@ -4,7 +4,10 @@ import type { Request, Response } from 'express';
 import { z } from 'zod';
 
 const schema = z.object({
-	origin: z.string()
+	origin: z.string(),
+	// Opaque value echoed back by Google on the callback — the native app
+	// passes 'app' so the web callback knows to hand the token off to it.
+	state: z.string().optional()
 });
 
 export const POST = [
@@ -12,13 +15,13 @@ export const POST = [
 	async (req: Request, res: Response) => {
 		const body = req.body as z.infer<typeof schema>;
 
-		const googleUrl = getGoogleOauthUrl(body.origin);
+		const googleUrl = getGoogleOauthUrl(body.origin, body.state);
 
 		return res.json({ google: googleUrl });
 	}
 ];
 
-function getGoogleOauthUrl(origin: string) {
+function getGoogleOauthUrl(origin: string, state?: string) {
 	const url = new URL('https://accounts.google.com/o/oauth2/v2/auth');
 
 	url.searchParams.append('client_id', GOOGLE_CLIENT_ID);
@@ -33,6 +36,7 @@ function getGoogleOauthUrl(origin: string) {
 			'https://www.googleapis.com/auth/userinfo.profile'
 		].join(' ')
 	);
+	if (state) url.searchParams.append('state', state);
 
 	return url;
 }
