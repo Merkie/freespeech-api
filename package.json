@@ -26,6 +26,7 @@
 		"@paralleldrive/cuid2": "^2.2.2",
 		"@prisma/client": "^5.22.0",
 		"@types/bcryptjs": "^2.4.6",
+		"@types/nodemailer": "^8.0.1",
 		"axios": "^1.7.4",
 		"bcryptjs": "^2.4.3",
 		"cors": "^2.8.5",
@@ -36,6 +37,7 @@
 		"express-file-routing": "^3.0.3",
 		"jsonwebtoken": "^9.0.2",
 		"node-cron": "^3.0.3",
+		"nodemailer": "^9.0.1",
 		"puppeteer": "^23.1.1",
 		"sharp": "^0.34.5",
 		"zod": "^3.23.8"

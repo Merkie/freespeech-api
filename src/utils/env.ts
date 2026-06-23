@@ -13,6 +13,9 @@ export const R2_ACCESS_KEY = process.env.R2_ACCESS_KEY + '';
 export const R2_SECRET_KEY = process.env.R2_SECRET_KEY + '';
 export const R2_BUCKET = process.env.R2_BUCKET + '';
 export const ELEVEN_LABS_KEY = process.env.ELEVEN_LABS_KEY + '';
+export const SMTP_USER = process.env.SMTP_USER + '';
+export const SMTP_PASS = process.env.SMTP_PASS + '';
+export const SMTP_FROM = process.env.SMTP_FROM || process.env.SMTP_USER + '';
 
 export function init() {
 	if (PORT.length === 0) throw new Error('PORT is not set');
