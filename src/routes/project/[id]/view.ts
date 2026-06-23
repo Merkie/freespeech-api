@@ -1,30 +1,23 @@
 import { authenticateRequest } from '@/middleware/authenticate-request';
-import { cache, invalidateCache } from '@/resources/cache';
 import prisma from '@/resources/prisma';
 import type { Request, Response } from 'express';
 
 export const GET = [
 	authenticateRequest(),
 	async (req: Request, res: Response) => {
-		let project = await cache(
-			prisma.project.findFirst({
-				where: {
-					id: req.params.id,
-					userId: req.userId
-				},
-				include: {
-					connectedPages: {
-						include: {
-							tilePage: true
-						}
+		let project = await prisma.project.findFirst({
+			where: {
+				id: req.params.id,
+				userId: req.userId
+			},
+			include: {
+				connectedPages: {
+					include: {
+						tilePage: true
 					}
 				}
-			}),
-			{
-				key: `project:${req.params.id}:${req.userId}`,
-				ttl: '60s'
 			}
-		);
+		});
 
 		if (!project) {
 			return res.status(404).json({ error: 'Project not found' });
@@ -43,7 +36,6 @@ export const GET = [
 					data: { homePageId }
 				});
 				project = { ...project, homePageId };
-				invalidateCache(`project:${req.params.id}:${req.userId}`);
 				console.log(`[project/view] Backfilled homePageId for project ${project.id}`);
 			}
 		}

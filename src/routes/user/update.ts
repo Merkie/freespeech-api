@@ -5,7 +5,6 @@ import { authenticateRequest } from '@/middleware/authenticate-request';
 import { validateSchema } from '@/middleware/validate-schema';
 import prisma from '@/resources/prisma';
 import { SITE_SECRET } from '@/utils/env';
-import { invalidateCache } from '@/resources/cache';
 
 const schema = z.object({
 	name: z.string().optional(),
@@ -38,8 +37,6 @@ export const POST = [
 			},
 			data: body
 		});
-
-		invalidateCache(`user:${req.userId}`);
 
 		return res.json({ success: true });
 	}

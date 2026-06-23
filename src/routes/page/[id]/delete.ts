@@ -1,5 +1,4 @@
 import { authenticateRequest } from '@/middleware/authenticate-request';
-import { invalidateCache } from '@/resources/cache';
 import prisma from '@/resources/prisma';
 import type { Request, Response } from 'express';
 
@@ -28,9 +27,6 @@ export const DELETE = [
 				id: pageId
 			}
 		});
-
-		invalidateCache(`page:${pageId}:${req.userId}`);
-		invalidateCache(`project:${pageId}:${req.userId}`);
 
 		return res.json({
 			message: 'Page deleted successfully.'

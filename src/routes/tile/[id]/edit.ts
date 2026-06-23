@@ -1,6 +1,5 @@
 import { authenticateRequest } from '@/middleware/authenticate-request';
 import { validateSchema } from '@/middleware/validate-schema';
-import { invalidateCache } from '@/resources/cache';
 import prisma from '@/resources/prisma';
 import type { Request, Response } from 'express';
 import { z } from 'zod';
@@ -61,9 +60,6 @@ export const POST = [
 			},
 			data: body
 		});
-
-		invalidateCache(`page:${existingTile.tilePageId}:${req.userId}`);
-		if (movingToNewPage) invalidateCache(`page:${body.tilePageId}:${req.userId}`);
 
 		return res.json({ success: true });
 	}

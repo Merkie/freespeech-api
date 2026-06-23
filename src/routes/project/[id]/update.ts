@@ -1,7 +1,6 @@
 import { authenticateRequest } from '@/middleware/authenticate-request';
 import { validateSchema } from '@/middleware/validate-schema';
 import prisma from '@/resources/prisma';
-import { invalidateCache } from '@/resources/cache';
 import type { Request, Response } from 'express';
 import { z } from 'zod';
 
@@ -25,9 +24,6 @@ export const POST = [
 			},
 			data: body
 		});
-
-		invalidateCache(`project:${req.params.id}:${req.userId}`);
-		invalidateCache(`projects:${req.userId}`);
 
 		return res.json({ success: true });
 	}

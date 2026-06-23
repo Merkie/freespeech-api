@@ -3,7 +3,6 @@ import { z } from 'zod';
 import { authenticateRequest } from '@/middleware/authenticate-request';
 import { validateSchema } from '@/middleware/validate-schema';
 import prisma from '@/resources/prisma';
-import { invalidateCache } from '@/resources/cache';
 
 const schema = z.object({
 	templatePageId: z.string(),
@@ -86,8 +85,6 @@ export const POST = [
 				},
 			},
 		});
-
-		invalidateCache(`page:${req.params.id}:${req.userId}`);
 
 		return res.json({
 			link,

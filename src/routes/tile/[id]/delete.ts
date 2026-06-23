@@ -1,5 +1,4 @@
 import { authenticateRequest } from '@/middleware/authenticate-request';
-import { invalidateCache } from '@/resources/cache';
 
 import prisma from '@/resources/prisma';
 import type { Request, Response } from 'express';
@@ -29,8 +28,6 @@ export const DELETE = [
 				}
 			}
 		});
-
-		invalidateCache(`page:${tilePage.tilePageId}:${req.userId}`);
 
 		return res.json({ success: true });
 	}

@@ -1,7 +1,6 @@
 import type { Request, Response } from 'express';
 import { authenticateRequest } from '@/middleware/authenticate-request';
 import prisma from '@/resources/prisma';
-import { invalidateCache } from '@/resources/cache';
 
 export const POST = [
 	authenticateRequest(),
@@ -28,8 +27,6 @@ export const POST = [
 				where: { tilePageId: req.params.id },
 			});
 		}
-
-		invalidateCache(`page:${req.params.id}:${req.userId}`);
 
 		return res.json({ success: true });
 	},
