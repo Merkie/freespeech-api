@@ -3,7 +3,6 @@ import type { Request, Response } from 'express';
 import { validateSchema } from '@/middleware/validate-schema';
 import { authenticateRequest } from '@/middleware/authenticate-request';
 import prisma from '@/resources/prisma';
-import { invalidateCache } from '@/resources/cache';
 
 const schema = z.object({
 	x: z.number(),
@@ -46,8 +45,6 @@ export const POST = [
 				tilePageId: body.pageId
 			}
 		});
-
-		invalidateCache(`page:${page.id}:${req.userId}`);
 
 		return res.json({ tile });
 	}

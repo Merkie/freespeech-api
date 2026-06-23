@@ -1,6 +1,5 @@
 import { authenticateRequest } from '@/middleware/authenticate-request';
 import prisma from '@/resources/prisma';
-import { invalidateCache } from '@/resources/cache';
 import type { Request, Response } from 'express';
 
 export const DELETE = [
@@ -47,9 +46,6 @@ export const DELETE = [
 				id: req.params.id as string
 			}
 		});
-
-		invalidateCache(`project:${req.params.id}:${req.userId}`);
-		invalidateCache(`projects:${req.userId}`);
 
 		return res.json({ success: true });
 	}

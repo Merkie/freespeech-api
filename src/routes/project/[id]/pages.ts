@@ -1,5 +1,4 @@
 import { authenticateRequest } from '@/middleware/authenticate-request';
-import { cache } from '@/resources/cache';
 import prisma from '@/resources/prisma';
 import type { Request, Response } from 'express';
 
@@ -8,28 +7,22 @@ export const GET = [
 	async (req: Request, res: Response) => {
 		const startTime = Date.now();
 
-		const pages = await cache(
-			prisma.tilePageInProject.findMany({
-				where: {
-					project: {
-						id: req.params.id,
-						userId: req.userId
-					}
-				},
-				include: {
-					tilePage: true
-				},
-				orderBy: {
-					tilePage: {
-						updatedAt: 'desc'
-					}
+		const pages = await prisma.tilePageInProject.findMany({
+			where: {
+				project: {
+					id: req.params.id,
+					userId: req.userId
 				}
-			}),
-			{
-				key: `project-pages:${req.params.id}:${req.userId}`,
-				ttl: '5m'
+			},
+			include: {
+				tilePage: true
+			},
+			orderBy: {
+				tilePage: {
+					updatedAt: 'desc'
+				}
 			}
-		);
+		});
 
 		const duration = Date.now() - startTime;
 		console.log(`[project/pages] Pages fetched in ${duration}ms (projectId: ${req.params.id})`);

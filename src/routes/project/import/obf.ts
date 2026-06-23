@@ -2,7 +2,6 @@ import type { Request, Response } from 'express';
 import { OBFPage } from '@/utils/open-board-format-types';
 import { authenticateRequest } from '@/middleware/authenticate-request';
 import prisma from '@/resources/prisma';
-import { invalidateCache } from '@/resources/cache';
 
 export const POST = [
 	authenticateRequest(),
@@ -74,8 +73,6 @@ export const POST = [
 				tilePageId: string;
 			}[]
 		});
-
-		invalidateCache(`projects:${req.userId}`);
 
 		return res.json({ success: true, projectId: createdProject.id });
 	}
