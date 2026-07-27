@@ -45,7 +45,7 @@ export const POST = [
 		} else {
 			const createdUser = await prisma.user.create({
 				data: {
-					email: profile.email,
+					email: profile.email.toLowerCase(),
 					name: profile.name,
 					profileImgUrl: profile.picture
 				}

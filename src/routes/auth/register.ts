@@ -28,8 +28,11 @@ export const POST = [
 
 		const hashedPassword = bcrypt.hashSync(body.password, 10);
 		const createdUser = await prisma.user.create({
+			// Stored lowercase. Every lookup already matches case-insensitively, so the only thing
+			// mixed case ever did was let User.email's case-sensitive unique index treat two
+			// spellings of one address as two accounts.
 			data: {
-				email: body.email,
+				email: body.email.toLowerCase(),
 				password: hashedPassword,
 				name: body.name
 			}
