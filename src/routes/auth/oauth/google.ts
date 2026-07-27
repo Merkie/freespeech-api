@@ -21,7 +21,22 @@ export const POST = [
 		const profile = await getProfile(access_token);
 		if (!profile || !profile.email) return res.status(400).json({ error: 'No profile or email.' });
 
-		const existingUser = await prisma.user.findUnique({ where: { email: profile.email } });
+		// Matched case-insensitively, like login / register / forgot-password. An exact findUnique
+		// here meant that when Google returned an address whose case differed from the stored one,
+		// the account was not found and a second, empty one was created instead. Six such pairs
+		// already exist in this database.
+		// Oldest first so the original account wins deterministically rather than by query plan.
+		// NOTE: deploy this only after those pairs have been merged — until then it changes which
+		// of the two accounts an affected user lands in when signing in with Google.
+		const existingUser = await prisma.user.findFirst({
+			where: {
+				email: {
+					equals: profile.email,
+					mode: 'insensitive'
+				}
+			},
+			orderBy: { createdAt: 'asc' }
+		});
 
 		let tokenUserId = '';
 
@@ -30,7 +45,7 @@ export const POST = [
 		} else {
 			const createdUser = await prisma.user.create({
 				data: {
-					email: profile.email,
+					email: profile.email.toLowerCase(),
 					name: profile.name,
 					profileImgUrl: profile.picture
 				}
