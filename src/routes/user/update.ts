@@ -9,7 +9,9 @@ import { SITE_SECRET } from '@/utils/env';
 const schema = z.object({
 	name: z.string().optional(),
 	profileImgUrl: z.string().optional(),
-	elevenLabsApiKey: z.string().optional(),
+	// A string saves a new key and null removes it. An empty string is ignored: the voice settings
+	// page used to echo the key it was shown back on every save, and the API no longer shows it.
+	elevenLabsApiKey: z.string().nullable().optional(),
 	usePersonalElevenLabsKey: z.boolean().optional()
 });
 
@@ -26,9 +28,14 @@ export const POST = [
 		});
 		if (!fetchedUser) return res.json({ error: 'User not found' });
 
-		if (body.elevenLabsApiKey) {
-			const cryptr = new Cryptr(SITE_SECRET);
-			body.elevenLabsApiKey = cryptr.encrypt(body.elevenLabsApiKey);
+		if (typeof body.elevenLabsApiKey === 'string') {
+			const key = body.elevenLabsApiKey.trim();
+			if (key) {
+				const cryptr = new Cryptr(SITE_SECRET);
+				body.elevenLabsApiKey = cryptr.encrypt(key);
+			} else {
+				delete body.elevenLabsApiKey;
+			}
 		}
 
 		await prisma.user.update({
