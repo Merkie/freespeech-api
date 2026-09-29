@@ -5,15 +5,28 @@ import { z } from 'zod';
 import { generatePasswordResetToken } from '@/utils/token';
 import { sendPasswordResetEmail } from '@/resources/email';
 import { CLIENT_HOST } from '@/utils/env';
+import { emailKey, limitByIp, sendTooManyRequests } from '@/utils/rate-limit';
+import { forgotPasswordEmailLimiter, forgotPasswordIpLimiter } from '@/utils/auth-limits';
 
 const schema = z.object({
 	email: z.string().email()
 });
 
 export const POST = [
+	limitByIp(forgotPasswordIpLimiter, 'Too many password reset requests from your network.'),
 	validateSchema(schema),
 	async (req: Request, res: Response) => {
 		const body = req.body as z.infer<typeof schema>;
+
+		// Counted whether or not the account exists, so the limit reveals nothing about registration.
+		const retryAfter = forgotPasswordEmailLimiter.consume(emailKey(body.email));
+		if (retryAfter) {
+			return sendTooManyRequests(
+				res,
+				retryAfter,
+				'Too many password reset requests for this email.'
+			);
+		}
 
 		const user = await prisma.user.findFirst({
 			where: {

@@ -4,6 +4,8 @@ import prisma from '@/resources/prisma';
 import bcrypt from 'bcryptjs';
 import { z } from 'zod';
 import { generateToken } from '@/utils/token';
+import { limitByIp } from '@/utils/rate-limit';
+import { registerIpLimiter } from '@/utils/auth-limits';
 
 const schema = z.object({
 	email: z.string().email(),
@@ -12,6 +14,7 @@ const schema = z.object({
 });
 
 export const POST = [
+	limitByIp(registerIpLimiter, 'Too many sign-up attempts from your network.'),
 	validateSchema(schema),
 	async (req: Request, res: Response) => {
 		const body = req.body as z.infer<typeof schema>;

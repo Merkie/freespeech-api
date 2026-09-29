@@ -4,6 +4,8 @@ import prisma from '@/resources/prisma';
 import bcrypt from 'bcryptjs';
 import { z } from 'zod';
 import { generateToken } from '@/utils/token';
+import { emailKey, limitByIp, sendTooManyRequests } from '@/utils/rate-limit';
+import { loginFailureLimiter, loginIpLimiter } from '@/utils/auth-limits';
 
 const schema = z.object({
 	email: z.string().email(),
@@ -11,9 +13,21 @@ const schema = z.object({
 });
 
 export const POST = [
+	limitByIp(loginIpLimiter, 'Too many sign-in attempts from your network.'),
 	validateSchema(schema),
 	async (req: Request, res: Response) => {
 		const body = req.body as z.infer<typeof schema>;
+
+		// Checked before the password so a locked account cannot be guessed at even with the right one.
+		const accountKey = emailKey(body.email);
+		const retryAfter = loginFailureLimiter.retryAfter(accountKey);
+		if (retryAfter) {
+			return sendTooManyRequests(
+				res,
+				retryAfter,
+				'Too many failed sign-in attempts for this account.'
+			);
+		}
 
 		const user = await prisma.user.findFirst({
 			where: {
@@ -23,11 +37,13 @@ export const POST = [
 				}
 			}
 		});
-		if (!user) return res.status(401).json({ error: 'Invalid email or password' });
-		if (!user.password) return res.status(401).json({ error: 'Invalid email or password' });
+		const doPasswordsMatch = !!user?.password && bcrypt.compareSync(body.password, user.password);
+		if (!user || !doPasswordsMatch) {
+			loginFailureLimiter.hit(accountKey);
+			return res.status(401).json({ error: 'Invalid email or password' });
+		}
 
-		const doPasswordsMatch = bcrypt.compareSync(body.password, user.password);
-		if (!doPasswordsMatch) return res.status(401).json({ error: 'Invalid email or password' });
+		loginFailureLimiter.reset(accountKey);
 
 		const { token } = generateToken(user.id);
 

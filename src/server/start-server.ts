@@ -12,6 +12,9 @@ export default async function StartServer() {
 	const app: Express = express();
 	const port = parseInt(PORT);
 
+	// nginx on the same host is the only proxy trusted to set X-Forwarded-For; see utils/client-ip.
+	app.set('trust proxy', 'loopback');
+
 	app.use(cors());
 	app.options('*', cors());
 
