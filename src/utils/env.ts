@@ -16,6 +16,7 @@ export const ELEVEN_LABS_KEY = process.env.ELEVEN_LABS_KEY + '';
 export const SMTP_USER = process.env.SMTP_USER + '';
 export const SMTP_PASS = process.env.SMTP_PASS + '';
 export const SMTP_FROM = process.env.SMTP_FROM || process.env.SMTP_USER + '';
+export const RESEND_API_KEY = process.env.RESEND_API_KEY || '';
 
 export function init() {
 	if (PORT.length === 0) throw new Error('PORT is not set');

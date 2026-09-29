@@ -1,7 +1,8 @@
 import nodemailer from 'nodemailer';
-import { SMTP_FROM, SMTP_PASS, SMTP_USER } from '@/utils/env';
+import { RESEND_API_KEY, SMTP_FROM, SMTP_PASS, SMTP_USER } from '@/utils/env';
 
-// Gmail / Google Workspace SMTP using an app password.
+// Resend's HTTPS API when RESEND_API_KEY is set (DigitalOcean blocks outbound SMTP on
+// newer droplets); otherwise Gmail / Google Workspace SMTP using an app password.
 const transporter = nodemailer.createTransport({
 	host: 'smtp.gmail.com',
 	port: 465,
@@ -23,13 +24,26 @@ export async function sendEmail({
 	html?: string;
 	text?: string;
 }) {
-	return transporter.sendMail({
-		from: SMTP_FROM,
-		to,
-		subject,
-		html,
-		text
+	if (RESEND_API_KEY) return sendWithResend({ to, subject, html, text });
+	return transporter.sendMail({ from: SMTP_FROM, to, subject, html, text });
+}
+
+async function sendWithResend(email: {
+	to: string;
+	subject: string;
+	html?: string;
+	text?: string;
+}) {
+	const response = await fetch('https://api.resend.com/emails', {
+		method: 'POST',
+		headers: { Authorization: `Bearer ${RESEND_API_KEY}`, 'Content-Type': 'application/json' },
+		body: JSON.stringify({ from: SMTP_FROM, ...email }),
+		signal: AbortSignal.timeout(15_000)
 	});
+	if (!response.ok) {
+		throw new Error(`Resend rejected the email (${response.status}): ${await response.text()}`);
+	}
+	return response.json();
 }
 
 export async function sendPasswordResetEmail(to: string, resetUrl: string) {
