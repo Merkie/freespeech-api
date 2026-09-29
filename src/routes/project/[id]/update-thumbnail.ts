@@ -5,9 +5,10 @@ import { CLIENT_HOST, R2_BUCKET } from '@/utils/env';
 import { GetProjectHomePageID } from '@/utils/get-project-home-page-id';
 import slugify from '@/utils/slugify';
 import { generateToken } from '@/utils/token';
+import { resolvesToPublicAddresses } from '@/utils/safe-fetch';
 import { DeleteObjectCommand, PutObjectCommand } from '@aws-sdk/client-s3';
 import type { Request, Response } from 'express';
-import puppeteer, { type Browser } from 'puppeteer';
+import puppeteer, { type Browser, type Page } from 'puppeteer';
 
 let browserInstance: Browser | null = null;
 
@@ -23,6 +24,43 @@ async function getBrowserInstance() {
 		});
 	}
 	return browserInstance;
+}
+
+// The thumbnail page renders tile images from user-supplied URLs inside this server's Chromium, so
+// requests to private, loopback or metadata addresses are refused. The app itself (CLIENT_HOST)
+// resolves to this server and is allowed by name. Page requests bypass the service worker so every
+// request passes through this check.
+async function blockPrivateRequests(page: Page) {
+	const trustedHost = new URL(CLIENT_HOST).hostname;
+	const hostChecks = new Map<string, Promise<boolean>>();
+
+	await page.setBypassServiceWorker(true);
+	await page.setRequestInterception(true);
+
+	page.on('request', (request) => {
+		if (request.isInterceptResolutionHandled()) return;
+
+		let url: URL;
+		try {
+			url = new URL(request.url());
+		} catch {
+			return request.abort('blockedbyclient');
+		}
+
+		if (url.protocol === 'data:' || url.protocol === 'blob:') return request.continue();
+		if (url.protocol !== 'http:' && url.protocol !== 'https:') {
+			return request.abort('blockedbyclient');
+		}
+		if (url.hostname === trustedHost) return request.continue();
+
+		if (!hostChecks.has(url.hostname)) {
+			hostChecks.set(url.hostname, resolvesToPublicAddresses(url.hostname));
+		}
+		hostChecks
+			.get(url.hostname)!
+			.then((allowed) => (allowed ? request.continue() : request.abort('blockedbyclient')))
+			.catch(() => {});
+	});
 }
 
 export const POST = [
@@ -49,6 +87,7 @@ export const POST = [
 
 		const browser = await getBrowserInstance();
 		const page = await browser.newPage();
+		await blockPrivateRequests(page);
 
 		// Set the cookies
 		await page.setCookie({
